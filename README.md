@@ -158,8 +158,6 @@ Visit: http://127.0.0.1:8000/
 - Analytics and edit tracking
 
 
----
-
 ## Screenshots
 
 The following screenshots showcase the current **UI-first phase** of the project.  
@@ -176,7 +174,6 @@ docs/screenshots/
 > Note: These screenshots represent static templates during Phase 1.  
 > As Django integration progresses, screenshots will be updated to reflect dynamic content and routing.
 
----
 
 ## Using the Makefile
 
