@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Design Guidelines — Docs (Editor v6)</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              myfin: {
+                50:'#F5FAFF',100:'#E9F4FF',200:'#D7ECFF',300:'#A9D7FF',
+                400:'#6FBFFF',500:'#3DA3F8',600:'#1E88E5',700:'#1663B7',
+                800:'#114C91',900:'#0A3872'
+              }
+            },
+            boxShadow:{ soft:'0 6px 20px rgba(0,0,0,0.05)' }
+          }
+        }
+      }
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer base {
+        html { scroll-behavior:smooth }
+        body { @apply bg-white text-slate-800 font-sans; font-family:Roboto, system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+        .prose h1 { @apply text-3xl font-bold text-slate-900 mt-10 mb-4; }
+        .prose h2 { @apply text-2xl font-semibold text-slate-900 mt-10 mb-3; }
+        .prose h3 { @apply text-lg font-semibold text-slate-900 mt-8 mb-2; }
+        .prose p  { @apply leading-7 text-slate-700; }
+        .prose a  { @apply text-myfin-600 hover:text-myfin-700 underline; }
+        .prose ul { @apply list-disc pl-5 space-y-1; }
+        .prose ol { @apply list-decimal pl-5 space-y-1; }
+        .prose code { @apply bg-slate-100 rounded px-1.5 py-0.5 text-[0.9em] text-slate-800; }
+        .toc-link.active {
+          @apply bg-myfin-100 text-myfin-700 font-medium;}
+      }
+
+      .editing [data-section] { outline:2px dashed rgba(17,76,145,.25); outline-offset:6px; position:relative; }
+      .editing [contenteditable="true"] { outline:1px dashed rgba(148,163,184,.6); outline-offset:2px; }
+
+      .sec-tools { position:absolute; top:-10px; right:-10px; display:none; z-index:3; }
+      .editing [data-section]:hover .sec-tools { display:flex; }
+
+      .sec-handle { position:absolute; top:-12px; left:-12px; display:none; z-index:3; cursor:grab; }
+      .editing [data-section]:hover .sec-handle { display:flex; }
+      .sec-handle:active { cursor: grabbing; }
+
+      .sortable-ghost {
+        opacity: 0.4;
+        background: #f0f6ff;
+      }
+
+      .plus-btn {
+        @apply absolute z-20 hidden h-8 w-8 rounded-full border border-slate-300 bg-white shadow-soft text-slate-600 hover:bg-slate-50;
+        transform: translateX(-50%);
+      }
+      .editing [data-section]:hover .plus-btn { display:flex; align-items:center; justify-content:center; }
+      .plus-top   { top:-18px; left:50%; }
+      .plus-bot   { bottom:-18px; left:50%; }
+
+      .editor-host { position: relative; z-index: 1; }
+    </style>
+  </head>
+
+  <body class="min-h-full">
+    <section class="border-b border-slate-200 bg-gradient-to-b from-myfin-50 to-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 text-center">
+        <div class="flex items-center justify-center gap-2">
+          <div class="h-10 w-10 rounded-full bg-myfin-600 text-white grid place-items-center font-semibold text-lg shadow-sm">M</div>
+          <span class="text-2xl font-semibold text-slate-900">Docs</span>
+        </div>
+        <p id="pageSubtitle" class="mt-3 text-slate-600 max-w-2xl mx-auto" data-editable contenteditable="false">Design Guidelines & Implementation Details</p>
+      </div>
+    </section>
+
+    <div class="border-b border-slate-200">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 text-sm flex items-center justify-between">
+        <nav class="text-slate-600">
+          <a class="hover:text-myfin-600" href="/">Home</a>
+          <span class="mx-2 text-slate-400">/</span>
+          <a class="hover:text-myfin-600" href="/design">Design</a>
+          <span class="mx-2 text-slate-400">/</span>
+          <span id="breadcrumbTitle" class="text-slate-900 font-medium">Design Guidelines</span>
+        </nav>
+        <div class="flex items-center gap-2">
+          <span class="hidden md:inline text-slate-500">Last updated: <time datetime="2025-11-03">Nov 3, 2025</time></span>
+          <span class="inline-flex items-center rounded-full bg-myfin-50 text-myfin-700 px-2.5 py-1 text-[12px] font-medium border border-myfin-100">v1.0</span>
+          <button id="toggleEdit" class="ml-2 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-50">Edit page</button>
+        </div>
+      </div>
+    </div>
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 pb-12">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <aside class="lg:col-span-4 xl:col-span-3 pt-8">
+          <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-soft lg:sticky lg:top-6 max-w-[290px] mx-auto">
+            <div class="text-xs uppercase tracking-wide text-slate-500 mb-4 text-center">Table of contents</div>
+            <div class="mb-3">
+              <label for="tocSearch" class="sr-only">Search sections</label>
+              <div class="relative">
+                <input id="tocSearch" type="text" placeholder="Search sections..." class="w-full rounded-full border border-slate-300 bg-white px-4 py-2 pr-9 text-sm text-slate-700 focus:border-myfin-500 focus:ring-2 focus:ring-myfin-200 outline-none">
+                <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <nav>
+              <ul id="toc" class="space-y-1 text-sm">
+              </ul>
+            </nav>
+          </div>
+        </aside>
+        <article id="content" class="lg:col-span-8 xl:col-span-9 prose max-w-none">
+          <section data-section class="pb-6">
+            <button class="sec-handle rounded-full bg-white border border-slate-300 shadow-soft p-1" title="Drag to reorder">
+              <svg class="h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path d="M7 2h2v4H7V2Zm4 0h2v4h-2V2ZM7 8h2v4H7V8ZM11 8h2v4h-2V8ZM7 14h2v4H7v-4Zm4 0h2v4h-2v-4Z"/></svg>
+            </button>
+            <div class="sec-tools gap-1">
+              <button class="btn-del rounded-md bg-white border border-slate-300 shadow-soft p-1 text-slate-600 hover:bg-slate-50" title="Delete section">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg>
+              </button>
+            </div>
+            <button class="plus-btn plus-top" data-add="above" title="Add section above">+</button>
+            <button class="plus-btn plus-bot" data-add="below" title="Add section below">+</button>
+
+            <h1 data-editable contenteditable="false">Overview</h1>
+            <p class="mb-4 ml-2" data-editable contenteditable="false">
+              This page defines the visual and interaction patterns used across the product suite. It’s a practical
+              guide to colors, spacing, typography, and code examples you can copy/paste directly into your app.
+            </p>
+
+            <div class="mt-6 grid gap-4" data-editable contenteditable="false">
+              <div class="ml-2 rounded-lg border border-slate-200 bg-white p-4 shadow-soft">
+                <div class="flex gap-3">
+                  <div class="h-6 w-6 shrink-0 grid place-items-center rounded-full bg-myfin-50 text-myfin-600">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2Zm1 15h-2v-2h2v2Zm0-4h-2V7h2v6Z"></path></svg>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-slate-900">Info</div>
+                    <p class="m-0 text-slate-700">Use a predominantly white background with restrained blue accents to keep interfaces legible and professional.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="ml-2 rounded-lg border border-amber-200 bg-amber-50 p-4">
+                <div class="flex gap-3">
+                  <div class="h-6 w-6 shrink-0 grid place-items-center rounded-full bg-amber-100 text-amber-700">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2Zm1 15h-2v-2h2v2Zm0-4h-2V9h2v4Z"></path></svg>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-amber-900">Warning</div>
+                    <p class="m-0 text-amber-900/90">Avoid using more than two saturation levels of blue on a single screen—overuse reduces focus and perceived hierarchy.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="ml-2 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                <div class="flex gap-3">
+                  <div class="h-6 w-6 shrink-0 grid place-items-center rounded-full bg-emerald-100 text-emerald-700">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"></path></svg>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-emerald-900">Tip</div>
+                    <p class="m-0 text-emerald-900/90">Use <code>myfin-50/100</code> for subtle surfaces and <code>myfin-600/700</code> for emphasis and primary actions.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </section>
+          <section data-section class="pb-6">
+            <button class="sec-handle rounded-full bg-white border border-slate-300 shadow-soft p-1" title="Drag to reorder">
+              <svg class="h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path d="M7 2h2v4H7V2Zm4 0h2v4h-2V2ZM7 8h2v4H7V8ZM11 8h2v4h-2V8ZM7 14h2v4H7v-4Zm4 0h2v4h-2v-4Z"/></svg>
+            </button>
+            <div class="sec-tools gap-1">
+              <button class="btn-del rounded-md bg-white border border-slate-300 shadow-soft p-1 text-slate-600 hover:bg-slate-50" title="Delete section">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg>
+              </button>
+            </div>
+            <button class="plus-btn plus-top" data-add="above" title="Add section above">+</button>
+            <button class="plus-btn plus-bot" data-add="below" title="Add section below">+</button>
+
+            <h2 id="typography" data-editable contenteditable="false">Typography</h2>
+            <p class="mb-4 ml-2" data-editable contenteditable="false">
+              We use system fonts with Roboto preference for clean legibility. Maintain a clear hierarchy—large, bold headings;
+              medium subheads; and body text at 14–16px line-height ~1.5.
+            </p>
+
+            <div class="ml-2 rounded-xl border border-slate-200 bg-white p-5 shadow-soft" data-editable contenteditable="false">
+              <h3 class="!m-0 mt-0 text-base font-semibold text-slate-900">Scale</h3>
+              <ul class="mt-2">
+                <li><strong>H1</strong> – 28–36px</li>
+                <li><strong>H2</strong> – 20–24px</li>
+                <li><strong>H3</strong> – 16–18px</li>
+                <li><strong>Body</strong> – 14–16px</li>
+              </ul>
+            </div>
+          </section>
+          <section data-section class="pb-6">
+            <button class="sec-handle rounded-full bg-white border border-slate-300 shadow-soft p-1" title="Drag to reorder">
+              <svg class="h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path d="M7 2h2v4H7V2Zm4 0h2v4h-2V2ZM7 8h2v4H7V8ZM11 8h2v4h-2V8ZM7 14h2v4H7v-4Zm4 0h2v4h-2v-4Z"/></svg>
+            </button>
+            <div class="sec-tools gap-1">
+              <button class="btn-del rounded-md bg-white border border-slate-300 shadow-soft p-1 text-slate-600 hover:bg-slate-50" title="Delete section">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg>
+              </button>
+            </div>
+            <button class="plus-btn plus-top" data-add="above" title="Add section above">+</button>
+            <button class="plus-btn plus-bot" data-add="below" title="Add section below">+</button>
+
+            <h2 id="color" data-editable contenteditable="false">Color</h2>
+            <p class="mb-4 ml-2" data-editable contenteditable="false">
+              The palette is centered on trustworthy blues with occasional teal/indigo accents. Keep content areas white,
+              use dividers for structure, and apply blue sparingly for CTAs and links.
+            </p>
+
+            <figure class="ml-2 rounded-xl border border-slate-200 bg-white shadow-soft overflow-hidden mt-4" data-editable contenteditable="false">
+              <img src="https://images.unsplash.com/photo-1510915228340-29c85a43dcfe?q=80&w=1600&auto=format&fit=crop" alt="Example UI illustration" class="w-full object-cover max-h-72">
+              <figcaption class="px-4 py-3 text-sm text-slate-600 border-t border-slate-100">
+                Figure 1. Clean, open layouts with restrained accent color increases comprehension.
+              </figcaption>
+            </figure>
+          </section>
+          <section data-section class="pb-6">
+            <button class="sec-handle rounded-full bg-white border border-slate-300 shadow-soft p-1" title="Drag to reorder">
+              <svg class="h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path d="M7 2h2v4H7V2Zm4 0h2v4h-2V2ZM7 8h2v4H7V8ZM11 8h2v4h-2V8ZM7 14h2v4H7v-4Zm4 0h2v4h-2v-4Z"/></svg>
+            </button>
+            <div class="sec-tools gap-1">
+              <button class="btn-del rounded-md bg-white border border-slate-300 shadow-soft p-1 text-slate-600 hover:bg-slate-50" title="Delete section">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg>
+              </button>
+            </div>
+            <button class="plus-btn plus-top" data-add="above" title="Add section above">+</button>
+            <button class="plus-btn plus-bot" data-add="below" title="Add section below">+</button>
+
+            <h2 id="components" data-editable contenteditable="false">Components</h2>
+            <p class="mb-4 ml-2" data-editable contenteditable="false">Below are examples of common components with code you can copy:</p>
+
+            <div class="ml-2 rounded-xl border border-slate-200 bg-white p-5 shadow-soft" data-editable contenteditable="false">
+              <h3 class="!m-0 mt-0 text-base font-semibold text-slate-900" id="buttons">Buttons</h3>
+              <div class="mt-3 flex flex-wrap gap-3">
+                <button class="rounded-md bg-myfin-600 hover:bg-myfin-700 text-white px-4 py-2">Primary</button>
+                <button class="rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 px-4 py-2">Secondary</button>
+                <button class="rounded-full bg-myfin-50 text-myfin-700 hover:bg-myfin-100 px-4 py-2">Pill</button>
+              </div>
+
+              <div class="relative mt-4">
+                <button class="copy-btn absolute right-2 top-2 rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-700 hover:bg-slate-50">Copy</button>
+                <pre class="overflow-x-auto rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm"><code class="language-html">&lt;button class=&quot;rounded-md bg-myfin-600 hover:bg-myfin-700 text-white px-4 py-2&quot;&gt;Primary&lt;/button&gt;
+  &lt;button class=&quot;rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 px-4 py-2&quot;&gt;Secondary&lt;/button&gt;
+  &lt;button class=&quot;rounded-full bg-myfin-50 text-myfin-700 hover:bg-myfin-100 px-4 py-2&quot;&gt;Pill&lt;/button&gt;</code></pre>
+              </div>
+            </div>
+            
+            <div class="ml-2 rounded-xl border border-slate-200 bg-white p-5 shadow-soft mt-6" data-editable contenteditable="false">
+              <h3 class="!m-0 mt-0 text-base font-semibold text-slate-900" id="form-field">Form Field</h3>
+              <div class="mt-3">
+                <label class="block text-sm text-slate-700 mb-1" for="email">Email</label>
+                <input id="email" type="email" placeholder="you@company.com" class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-800 shadow-soft focus:border-myfin-500 focus:ring-2 focus:ring-myfin-200 outline-none">
+              </div>
+              <div class="relative mt-4">
+                <button class="copy-btn absolute right-2 top-2 rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-700 hover:bg-slate-50">Copy</button>
+                <pre class="overflow-x-auto rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm"><code class="language-html">&lt;label class="block text-sm text-slate-700 mb-1" for="email"&gt;Email&lt;/label&gt;
+  &lt;input id="email" type="email" placeholder="you@company.com"
+  class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-800 shadow-soft focus:border-myfin-500 focus:ring-2 focus:ring-myfin-200 outline-none" /&gt;</code></pre>
+              </div>
+            </div>
+
+          </section>
+          <section data-section class="pb-6">
+            <button class="sec-handle rounded-full bg-white border border-slate-300 shadow-soft p-1" title="Drag to reorder">
+              <svg class="h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path d="M7 2h2v4H7V2Zm4 0h2v4h-2V2ZM7 8h2v4H7V8ZM11 8h2v4h-2V8ZM7 14h2v4H7v-4Zm4 0h2v4h-2v-4Z"/></svg>
+            </button>
+            <div class="sec-tools gap-1">
+              <button class="btn-del rounded-md bg-white border border-slate-300 shadow-soft p-1 text-slate-600 hover:bg-slate-50" title="Delete section">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg>
+              </button>
+            </div>
+            <button class="plus-btn plus-top" data-add="above" title="Add section above">+</button>
+            <button class="plus-btn plus-bot" data-add="below" title="Add section below">+</button>
+
+            <h2 id="tables" data-editable contenteditable="false">Tables</h2>
+            <p class="mb-4 ml-2">
+              Use lightweight borders and generous cell padding for scannability.
+            </p>
+            <div class="ml-2 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-soft">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 text-slate-700">
+                  <tr>
+                    <th class="px-4 py-3 font-medium border-b border-slate-200">Token</th>
+                    <th class="px-4 py-3 font-medium border-b border-slate-200">Value</th>
+                    <th class="px-4 py-3 font-medium border-b border-slate-200">Usage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="hover:bg-slate-50">
+                    <td class="px-4 py-3 border-b border-slate-100">myfin-50</td>
+                    <td class="px-4 py-3 border-b border-slate-100">#F5FAFF</td>
+                    <td class="px-4 py-3 border-b border-slate-100">Subtle surfaces</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="px-4 py-3 border-b border-slate-100">myfin-600</td>
+                    <td class="px-4 py-3 border-b border-slate-100">#1E88E5</td>
+                    <td class="px-4 py-3 border-b border-slate-100">Primary action</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="px-4 py-3">myfin-700</td>
+                    <td class="px-4 py-3">#1663B7</td>
+                    <td class="px-4 py-3">Hover / emphasis</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+          <section data-section class="pb-6">
+            <button class="sec-handle rounded-full bg-white border border-slate-300 shadow-soft p-1" title="Drag to reorder">
+              <svg class="h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path d="M7 2h2v4H7V2Zm4 0h2v4h-2V2ZM7 8h2v4H7V8ZM11 8h2v4h-2V8ZM7 14h2v4H7v-4Zm4 0h2v4h-2v-4Z"/></svg>
+            </button>
+            <div class="sec-tools gap-1">
+              <button class="btn-del rounded-md bg-white border border-slate-300 shadow-soft p-1 text-slate-600 hover:bg-slate-50" title="Delete section">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg>
+              </button>
+            </div>
+            <button class="plus-btn plus-top" data-add="above" title="Add section above">+</button>
+            <button class="plus-btn plus-bot" data-add="below" title="Add section below">+</button>
+
+            <h2 id="code" data-editable contenteditable="false">Code Examples</h2>
+            <p class="mb-4 ml-2" data-editable contenteditable="false">Copy-ready examples you can drop into your app:</p>
+            <div class="ml-2 relative mt-3" data-editable contenteditable="false">
+              <button class="copy-btn absolute right-2 top-2 rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-700 hover:bg-slate-50">Copy</button>
+              <pre class="overflow-x-auto rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm"><code class="language-js">/* Toggle a class on scroll for a compact header */
+  const header = document.querySelector('header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('shadow', window.scrollY > 8);
+  });</code></pre>
+            </div>
+          </section>
+          <section data-section class="pb-6">
+            <button class="sec-handle rounded-full bg-white border border-slate-300 shadow-soft p-1" title="Drag to reorder">
+              <svg class="h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path d="M7 2h2v4H7V2Zm4 0h2v4h-2V2ZM7 8h2v4H7V8ZM11 8h2v4h-2V8ZM7 14h2v4H7v-4Zm4 0h2v4h-2v-4Z"/></svg>
+            </button>
+            <div class="sec-tools gap-1">
+              <button class="btn-del rounded-md bg-white border border-slate-300 shadow-soft p-1 text-slate-600 hover:bg-slate-50" title="Delete section">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg>
+              </button>
+            </div>
+            <button class="plus-btn plus-top" data-add="above" title="Add section above">+</button>
+            <button class="plus-btn plus-bot" data-add="below" title="Add section below">+</button>
+            
+            <blockquote class="ml-2 border-l-4 border-myfin-200 bg-myfin-50/60 px-4 py-3 rounded-r-lg mt-6" data-editable contenteditable="false">
+              <p class="m-0 italic text-slate-700">“Design is not just what it looks like and feels like. Design is how it works.”</p>
+              <footer class="text-sm text-slate-500 mt-1">— Steve Jobs</footer>
+            </blockquote>
+          </section>
+          <div class="mt-10 flex items-center justify-between border-t border-slate-200 pt-6">
+            <a href="/getting-started" class="group inline-flex items-center gap-2 text-sm text-slate-700 hover:text-myfin-700">
+              <svg class="h-4 w-4 transition-transform group-hover:-translate-x-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg>
+              Getting Started
+            </a>
+            <a href="/components" class="group inline-flex items-center gap-2 text-sm text-slate-700 hover:text-myfin-700">
+              Components
+              <svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="m8.59 16.59 1.41 1.41L16 12 10 6 8.59 7.41 12.17 11z"></path></svg>
+            </a>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <div id="confirmModal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4 z-50">
+      <div class="w-full max-w-md rounded-xl bg-white shadow-soft border border-slate-200">
+        <div class="p-4 border-b border-slate-200">
+          <div class="font-medium">Delete section?</div>
+        </div>
+        <div class="p-4 text-sm text-slate-700">
+          Are you sure you want to delete this entire section? This action cannot be undone.
+        </div>
+        <div class="p-3 border-t border-slate-200 flex justify-end gap-2">
+          <button id="cancelDel" class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50">Cancel</button>
+          <button id="confirmDel" class="rounded-md bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 text-sm">Delete</button>
+        </div>
+      </div>
+    </div>
+    <template id="editorTemplate">
+      <section class="mt-4 editor-host">
+        <div class="border border-gray-200 rounded-t-lg bg-gray-50 p-2 flex flex-wrap items-center space-x-2">
+          <button class="flex items-center space-x-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-100">
+            <svg class="w-4 h-4 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C13.18 7.06 13.8 8.35 14.37 9.761M9 5.25V3m0 2.25c-.53 2.02-1.213 3.808-2.13 5.379M9 5.25V3m3.334 2.364C13.18 7.06 13.8 8.35 14.37 9.761m-3.06 0c.13.36.274.71.43 1.048m-4.5 0c.23-.98.58-1.857 1.02-2.621m3.06 0c.13.36.274.71.43 1.048m0 0c.22.46.46.903.72 1.328m0 0c.218.32.45.626.7.923m-4.5 0c.23-.98.58-1.857 1.02-2.621m0 0c.22.46.46.903.72 1.328m0 0c.218.32.45.626.7.923m-1.02-2.621c.23.98.58 1.857 1.02 2.621"></path></svg>
+            <span>Suisse Int'l</span>
+            <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+          </button>
+          <button class="flex items-center space-x-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-100">
+            <span>16px</span>
+            <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+          </button>
+          <div class="flex items-center space-x-0.5 pl-1">
+            <button class="p-2 rounded-md hover:bg-gray-200 text-gray-700 w-9 h-9 flex items-center justify-center"><span class="font-bold text-base">B</span></button>
+            <button class="p-2 rounded-md hover:bg-gray-200 text-gray-700 w-9 h-9 flex items-center justify-center"><span class="italic text-base">I</span></button>
+            <button class="p-2 rounded-md hover:bg-gray-200 text-gray-700 w-9 h-9 flex items-center justify-center"><span class="underline text-base">U</span></button>
+          </div>
+          <div class="h-5 w-px bg-gray-300 mx-2"></div>
+          <div class="flex items-center space-x-0.5">
+            <button class="p-2 rounded-md hover:bg-gray-200 text-gray-600"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"/></svg></button>
+            <button class="p-2 rounded-md hover:bg-gray-200 text-gray-600"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M6 12h12m-12 5.25h16.5"/></svg></button>
+            <button class="p-2 rounded-md hover:bg-gray-200 text-gray-600"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-4.5 5.25h4.5"/></svg></button>
+            <button class="p-2 rounded-md hover:bg-gray-200 text-gray-600"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12M8.25 17.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg></button>
+          </div>
+          <div class="h-5 w-px bg-gray-300 mx-2"></div>
+          <div class="flex items-center space-x-0.5">
+            <button class="p-2 rounded-md hover:bg-gray-200 text-gray-600"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg></button>
+            <button class="p-2 rounded-md hover:bg-gray-200 text-gray-600"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.007v.008h-.007V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg></button>
+            <button class="p-2 rounded-md hover:bg-gray-200 text-gray-600"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.624l.213.815-.213.815a3.375 3.375 0 00-2.455 2.456l-.815.213.815.213a3.375 3.375 0 002.455 2.456l.213.815-.213.815a3.375 3.375 0 00-2.456 2.455l.815.213-.815.213a3.375 3.375 0 002.456-2.455z"/></svg></button>
+          </div>
+        </div>
+        <div class="prose prose-lg max-w-none border border-gray-200 rounded-b-lg p-6 h-[500px] overflow-y-auto focus:outline-none editor-body" contenteditable="true">
+          <p>Edit your content here…</p>
+        </div>
+      </section>
+    </template>
+    <script>
+      function bindCopyButtons(root = document) {
+        root.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const pre = btn.nextElementSibling, code = pre?.querySelector('code'); if (!code) return;
+            const text = code.textContent.replace(/\u00A0/g, ' ');
+
+            navigator.clipboard.writeText(text).then(() => {
+              const t = btn.textContent; btn.textContent = 'Copied!';
+              btn.classList.add('text-emerald-700', 'border-emerald-300');
+              setTimeout(() => { btn.textContent = t; btn.classList.remove('text-emerald-700', 'border-emerald-300'); }, 900);
+            });
+          });
+        });
+      }
+      
+      document.addEventListener('DOMContentLoaded', () => {
+          bindCopyButtons();
+      });
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const content = document.getElementById('content');
+        const toggleEdit = document.getElementById('toggleEdit');
+        const confirmModal = document.getElementById('confirmModal');
+        const pageSubtitle = document.getElementById('pageSubtitle');
+        const breadcrumbTitle = document.getElementById('breadcrumbTitle');
+
+        let sectionPendingDelete = null;
+        let isEditing = false;
+        let sortable = null;
+
+
+        if (pageSubtitle && breadcrumbTitle) {
+          pageSubtitle.addEventListener('input', () => {
+            if (isEditing) {
+              breadcrumbTitle.textContent = pageSubtitle.textContent;
+            }
+          });
+        }
+
+        function setEditing(v) {
+          isEditing = v;
+          document.body.classList.toggle('editing', v);
+
+          if (!v) {
+            if (sortable) {
+              sortable.destroy();
+              sortable = null;
+            }
+
+            commitEditors();
+            document.querySelectorAll('#content .editor-host').forEach(el => el.remove());
+
+          } else {
+            if (!sortable) {
+              sortable = Sortable.create(content, {
+                animation: 150,
+                handle: ".sec-handle",
+                draggable: "[data-section]",
+                ghostClass: "sortable-ghost",
+              });
+            }
+          }
+
+          document.querySelectorAll('[data-editable]').forEach(el => {
+            el.setAttribute('contenteditable', v ? 'true' : 'false');
+          });
+
+          if (toggleEdit) toggleEdit.textContent = v ? 'Exit edit' : 'Edit page';
+        }
+
+        toggleEdit.addEventListener('click', () => setEditing(!isEditing));
+
+        document.addEventListener('keydown', (e) => {
+          if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'e') {
+            e.preventDefault();
+            setEditing(!isEditing);
+          }
+          if (e.key === 'Escape' && isEditing) {
+            setEditing(false);
+          }
+        });
+        
+        window.editingCore = {
+          isEditing: () => isEditing,
+          setEditing,
+          content,
+          confirmModal,
+          getSectionPendingDelete: () => sectionPendingDelete,
+          setSectionPendingDelete: (sec) => sectionPendingDelete = sec
+        };
+      });
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const core = window.editingCore;
+        if (!core) { console.error("Editing Core not loaded!"); return; }
+
+        const content = core.content;
+        const confirmModal = core.confirmModal;
+        const confirmDel = document.getElementById('confirmDel');
+        const cancelDel = document.getElementById('cancelDel');
+
+        content.addEventListener('click', (e) => {
+          if (!core.isEditing()) return;
+          const delBtn = e.target.closest('.btn-del');
+          if (!delBtn) return;
+          const sec = delBtn.closest('[data-section]');
+          if (!sec) return;
+
+          core.setSectionPendingDelete(sec);
+          confirmModal.classList.remove('hidden');
+          confirmModal.classList.add('flex');
+        });
+
+        cancelDel.addEventListener('click', () => {
+          core.setSectionPendingDelete(null);
+          confirmModal.classList.add('hidden');
+          confirmModal.classList.remove('flex');
+        });
+
+        confirmDel.addEventListener('click', () => {
+          const sectionToDelete = core.getSectionPendingDelete();
+          if (sectionToDelete) {
+            sectionToDelete.remove();
+            core.setSectionPendingDelete(null);
+          }
+          confirmModal.classList.add('hidden');
+          confirmModal.classList.remove('flex');
+        });
+      });
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const editorTpl = document.getElementById('editorTemplate');
+
+        function createEditorHost(prefillHTML) {
+          const node = editorTpl.content.firstElementChild.cloneNode(true);
+          const bodyEl = node.querySelector('.editor-body');
+          if (prefillHTML) bodyEl.innerHTML = prefillHTML;
+          return node;
+        }
+
+        function sectionContentHTML(sec) {
+          const clone = sec.cloneNode(true);
+          clone.querySelectorAll('.sec-handle,.sec-tools,.plus-btn,.editor-host').forEach(el => el.remove());
+          return clone.innerHTML;
+        }
+
+        function sectionHasEditor(sec) { return !!sec.querySelector('.editor-host'); }
+
+        function openEditorForSection(sec) {
+          if (sectionHasEditor(sec)) return;
+
+          document.querySelectorAll('#content [data-section] .editor-host')
+            .forEach(host => {
+              const s = host.closest('[data-section]');
+              if (s) closeEditorForSection(s, /*commit=*/true);
+            });
+
+          const html = sectionContentHTML(sec);
+          sec.querySelectorAll(':scope > *:not(.sec-handle):not(.sec-tools):not(.plus-btn)').forEach(el => el.remove());
+          const host = createEditorHost(html);
+          sec.appendChild(host);
+        }
+
+        function closeEditorForSection(sec, commit = true) {
+          const host = sec.querySelector('.editor-host');
+          if (!host) return;
+
+          let html = '';
+          if (commit) {
+            const bodyEl = host.querySelector('.editor-body');
+            html = (bodyEl?.innerHTML || '').trim();
+          }
+          host.remove();
+
+          const temp = document.createElement('div');
+          temp.innerHTML = (commit ? (html || '<p class="ml-2"> </p>') : '<p class="ml-2"> </p>'); // Add placeholder if empty
+
+          temp.querySelectorAll('*').forEach(node => {
+            if (['H1', 'H2', 'H3', 'H4', 'P', 'UL', 'OL', 'FIGURE', 'DIV', 'PRE', 'CODE', 'TABLE'].includes(node.tagName)) {
+              node.setAttribute('data-editable', '');
+              node.removeAttribute('contenteditable');
+            }
+          });
+
+          const frag = document.createDocumentFragment();
+          while (temp.firstChild) frag.appendChild(temp.firstChild);
+          sec.appendChild(frag);
+
+          bindCopyButtons(document);
+        }
+
+        function commitEditors() {
+          const sections = document.querySelectorAll('#content [data-section]');
+          sections.forEach(sec => {
+            const host = sec.querySelector('.editor-host');
+            if (!host) return;
+
+            const bodyEl = host.querySelector('.editor-body');
+            const html = (bodyEl?.innerHTML || '').trim();
+            host.remove();
+
+            const temp = document.createElement('div');
+            temp.innerHTML = html || '<p class="ml-2"> </p>';
+            temp.querySelectorAll('*').forEach(node => {
+              if (['H1', 'H2', 'H3', 'H4', 'P', 'UL', 'OL', 'FIGURE', 'DIV', 'PRE', 'CODE', 'TABLE'].includes(node.tagName)) {
+                node.setAttribute('data-editable', '');
+                node.removeAttribute('contenteditable');
+              }
+            });
+            const frag = document.createDocumentFragment();
+            while (temp.firstChild) frag.appendChild(temp.firstChild);
+            sec.appendChild(frag);
+          });
+
+          bindCopyButtons(document);
+        }
+        
+        window.editorManagement = {
+          createEditorHost,
+          sectionHasEditor,
+          openEditorForSection,
+          closeEditorForSection,
+          commitEditors
+        };
+        
+        window.commitEditors = commitEditors;
+      });
+    </script>
+  
+    <script>
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const core = window.editingCore;
+        const editorMgmt = window.editorManagement;
+        if (!core || !editorMgmt) { console.error("Core or Editor Management not loaded!"); return; }
+
+        const content = core.content;
+        
+        content.addEventListener('click', (e) => {
+          if (!core.isEditing()) return;
+
+          const addBtn = e.target.closest('.plus-btn');
+          if (addBtn) {
+            const sec = addBtn.closest('[data-section]');
+            const newSec = document.createElement('section');
+            newSec.setAttribute('data-section', '');
+            newSec.classList.add('pb-6', 'mt-8');
+            newSec.innerHTML = `
+              <button class="sec-handle rounded-full bg-white border border-slate-300 shadow-soft p-1" title="Drag to reorder">
+                <svg class="h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path d="M7 2h2v4H7V2Zm4 0h2v4h-2V2ZM7 8h2v4H7V8ZM11 8h2v4h-2V8ZM7 14h2v4H7v-4Zm4 0h2v4h-2v-4Z"/></svg>
+              </button>
+              <div class="sec-tools gap-1">
+                <button class="btn-del rounded-md bg-white border border-slate-300 shadow-soft p-1 text-slate-600 hover:bg-slate-50" title="Delete section">
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg>
+                </button>
+              </div>
+              <button class="plus-btn plus-top" data-add="above" title="Add section above">+</button>
+              <button class="plus-btn plus-bot" data-add="below" title="Add section below">+</button>
+            `;
+            const host = editorMgmt.createEditorHost('<p>Edit your content here…</p>');
+            newSec.appendChild(host);
+
+            if (addBtn.dataset.add === 'above') {
+              sec.insertAdjacentElement('beforebegin', newSec);
+            } else {
+              sec.insertAdjacentElement('afterend', newSec);
+            }
+
+            newSec.querySelector('.sec-handle')?.style.setProperty('cursor', 'grab');
+            return;
+          }
+
+          const sec = e.target.closest('[data-section]');
+          if (!sec) return;
+
+          if (e.target.closest('button, a, .sec-tools, .sec-handle')) return;
+
+          editorMgmt.openEditorForSection(sec);
+        });
+      });
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const core = window.editingCore;
+        const editorMgmt = window.editorManagement;
+        if (!core || !editorMgmt) { console.error("Core or Editor Management not loaded!"); return; }
+
+        document.addEventListener('click', (e) => {
+          if (!core.isEditing()) return;
+          if (
+            e.target.closest('#toggleEdit') ||
+            e.target.closest('#confirmModal') ||
+            e.target.closest('[data-section]') ||
+            e.target.closest('#pageSubtitle')
+          ) {
+            return;
+          }
+
+          document.querySelectorAll('#content [data-section]').forEach(sec => {
+            if (editorMgmt.sectionHasEditor(sec)) editorMgmt.closeEditorForSection(sec, /*commit=*/true);
+          });
+        }, true);
+      });
+    </script>
+
+    <script>
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const tocRoot = document.getElementById('toc');
+        if (!tocRoot) return;
+
+        const headings = [...document.querySelectorAll('#content h2, #content h3')];
+        const toSlug = s => s.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
+        
+        headings.forEach(h => {
+          if (!h.id) h.id = toSlug(h.textContent);
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <a href="#${h.id}" class="toc-link block rounded-md px-3 py-1.5 hover:bg-myfin-50 text-slate-700 ${h.tagName === 'H3' ? 'ml-3' : ''}">
+              ${h.textContent}
+            </a>`;
+          tocRoot.appendChild(li);
+        });
+
+        const links = [...document.querySelectorAll('.toc-link')];
+        const targets = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+        
+        if (targets.length === 0) return;
+
+        const spy = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const id = '#' + entry.target.id;
+              links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+            }
+          });
+        }, { rootMargin: '0px 0px -70% 0px', threshold: 0.1 });
+        
+        targets.forEach(el => spy.observe(el));
+      });
+    </script>
+  </body>
+</html>

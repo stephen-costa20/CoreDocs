@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Documentation - Home</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              myfin: {
+                50:  '#F5FAFF',
+                100: '#E9F4FF',
+                200: '#D7ECFF',
+                300: '#A9D7FF',
+                400: '#6FBFFF',
+                500: '#3DA3F8',
+                600: '#1E88E5',
+                700: '#1663B7',
+                800: '#114C91',
+                900: '#0A3872'
+              }
+            },
+            boxShadow: { soft: '0 6px 20px rgba(0,0,0,0.05)' }
+          }
+        }
+      }
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer base {
+        html { scroll-behavior: smooth; }
+        body {
+          @apply bg-white text-slate-800 font-sans;
+          font-family: Roboto, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+        }
+        .toc-link.active { @apply text-myfin-700 font-semibold; }
+        .btn {
+          @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium shadow-soft transition;
+        }
+        .btn-primary {
+          @apply bg-myfin-600 text-white hover:bg-myfin-700 focus:outline-none focus:ring-2 focus:ring-myfin-300;
+        }
+        .btn-ghost {
+          @apply bg-white text-slate-700 hover:bg-slate-100 border border-slate-300;
+        }
+        .icon-btn {
+          @apply inline-flex items-center justify-center rounded-full border border-slate-300 bg-white p-2 shadow-soft hover:bg-slate-100;
+        }
+        .input {
+          @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:border-myfin-500 focus:ring-2 focus:ring-myfin-200 outline-none;
+        }
+        .label { @apply block text-sm font-medium text-slate-700; }
+        .drag-row {
+          @apply flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2;
+        }
+        .drag-row.drag-over { @apply ring-2 ring-myfin-300; }
+        .drag-handle { @apply cursor-grab p-2 rounded-md text-slate-500 hover:text-slate-700; }
+        .kbd { @apply inline-flex items-center rounded border border-slate-300 bg-slate-50 px-2 text-[11px] font-medium text-slate-600; }
+        .select {
+          @apply rounded-md border border-slate-300 bg-white px-2 py-1 text-sm text-slate-800 focus:border-myfin-500 focus:ring-2 focus:ring-myfin-200 outline-none;
+        }
+        .badge {
+          @apply inline-flex items-center rounded-full bg-slate-100 text-slate-700 px-2 py-[2px] text-[11px] font-medium;
+        }
+        .icon-pick-btn {
+          @apply rounded-lg border border-slate-300 bg-white p-3 text-slate-700 hover:bg-slate-100 focus:outline-none;
+        }
+        .icon-pick-btn.active {
+          @apply ring-2 ring-myfin-500 border-myfin-500;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="min-h-full">
+    <section class="border-b border-slate-200 bg-gradient-to-b from-myfin-50 to-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        <div class="flex items-center justify-center gap-2 text-center">
+          <div class="h-10 w-10 rounded-full bg-myfin-600 text-white grid place-items-center font-semibold text-lg shadow-sm">M</div>
+          <span class="text-2xl font-semibold text-slate-900">Docs</span>
+        </div>
+        <p class="mt-3 text-slate-600 max-w-2xl mx-auto text-center">
+          Everything you need to get your software documentation online.
+        </p>
+      </div>
+    </section>
+
+
+    <main class="max-w-6xl mx-auto pt-4 sm:px-6 pt-2 lg:pt-4">
+      <div class="mb-6 flex items-center justify-end gap-2">
+        <button id="openAddModal" class="btn btn-primary">
+          <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
+          </svg>
+          Add New Page
+        </button>
+        <button id="openSettingsModal" class="icon-btn" title="Homepage Tiles Settings" aria-label="Homepage Tiles Settings">
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.548-.893 3.31.869 2.417 2.417a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.893 1.548-.869 3.31-2.417 2.417a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.548.893-3.31-.869-2.417-2.417a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35.643-.156 1.17-.583 1.066-2.573-.893-1.548.869-3.31 2.417-2.417.946.546 2.147.137 2.573-1.066z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </button>
+      </div>
+
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <aside class="lg:col-span-3 xl:col-span-4">
+          <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-soft lg:sticky lg:top-6 max-w-[290px] mx-auto">
+            <div class="text-xs uppercase tracking-wide text-slate-500 mb-4 text-center">Table of contents</div>
+            <div class="mb-3">
+              <label for="tocSearch" class="sr-only">Search sections</label>
+              <div class="relative">
+                <input id="tocSearch" type="text" placeholder="Search sections..." class="input rounded-full pr-9" />
+                <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </div>
+            </div>
+            <nav>
+              <ul id="tocList" class="space-y-1 text-sm">
+                <li><a class="toc-link block rounded-md px-3 py-2 hover:bg-myfin-50 text-slate-700" href="#introduction">Introduction</a></li>
+                <li><a class="toc-link block rounded-md px-3 py-2 hover:bg-myfin-50 text-slate-700" href="#installation">Installation</a></li>
+                <li><a class="toc-link block rounded-md px-3 py-2 hover:bg-myfin-50 text-slate-700" href="#apis">APIs</a></li>
+                <li><a class="toc-link block rounded-md px-3 py-2 hover:bg-myfin-50 text-slate-700" href="#guides">Guides</a></li>
+                <li><a class="toc-link block rounded-md px-3 py-2 hover:bg-myfin-50 text-slate-700" href="#sdk">SDKs</a></li>
+                <li><a class="toc-link block rounded-md px-3 py-2 hover:bg-myfin-50 text-slate-700" href="#faq">FAQ</a></li>
+              </ul>
+            </nav>
+          </div>
+        </aside>
+        <section class="lg:col-span-9 xl:col-span-8">
+          <div id="cardsGrid" class="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-2">
+            <article id="introduction" data-type="introduction" class="rounded-xl bg-white shadow-soft border border-slate-200 hover:shadow-md transition">
+              <div class="flex items-start gap-4 p-6">
+                <span class="h-10 w-10 rounded-full bg-myfin-50 text-myfin-600 grid place-items-center">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v4m0 10v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M3 12h4m10 0h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                </span>
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-900">Introduction</h3>
+                  <p class="mt-2 text-slate-600 text-sm leading-relaxed">Learn what this project is about and how to get started quickly.</p>
+                </div>
+              </div>
+            </article>
+            <article id="installation" data-type="installation" class="rounded-xl bg-white shadow-soft border border-slate-200 hover:shadow-md transition">
+              <div class="flex items-start gap-4 p-6">
+                <span class="h-10 w-10 rounded-full bg-myfin-50 text-myfin-600 grid place-items-center">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v10m0 0l-3.5-3.5M12 14l3.5-3.5M4 20h16"/></svg>
+                </span>
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-900">Installation</h3>
+                  <p class="mt-2 text-slate-600 text-sm leading-relaxed">Step-by-step instructions to set up your environment and begin using the app.</p>
+                </div>
+              </div>
+            </article>
+            <article id="apis" data-type="apis" class="rounded-xl bg-white shadow-soft border border-slate-200 hover:shadow-md transition">
+              <div class="flex items-start gap-4 p-6">
+                <span class="h-10 w-10 rounded-full bg-myfin-50 text-myfin-600 grid place-items-center">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
+                </span>
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-900">APIs</h3>
+                  <p class="mt-2 text-slate-600 text-sm leading-relaxed">Explore available endpoints, authentication, and usage examples.</p>
+                </div>
+              </div>
+            </article>
+            <article id="guides" data-type="guides" class="rounded-xl bg-white shadow-soft border border-slate-200 hover:shadow-md transition">
+              <div class="flex items-start gap-4 p-6">
+                <span class="h-10 w-10 rounded-full bg-myfin-50 text-myfin-600 grid place-items-center">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6"/></svg>
+                </span>
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-900">Guides</h3>
+                  <p class="mt-2 text-slate-600 text-sm leading-relaxed">Common tasks and best practices for building with the software.</p>
+                </div>
+              </div>
+            </article>
+            <article id="sdk" data-type="sdk" class="rounded-xl bg-white shadow-soft border border-slate-200 hover:shadow-md transition">
+              <div class="flex items-start gap-4 p-6">
+                <span class="h-10 w-10 rounded-full bg-myfin-50 text-myfin-600 grid place-items-center">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M6 12h12M8 17h8"/></svg>
+                </span>
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-900">SDKs</h3>
+                  <p class="mt-2 text-slate-600 text-sm leading-relaxed">Language-specific SDKs and quickstart snippets.</p>
+                </div>
+              </div>
+            </article>
+            <article id="faq" data-type="faq" class="rounded-xl bg-white shadow-soft border border-slate-200 hover:shadow-md transition">
+              <div class="flex items-start gap-4 p-6">
+                <span class="h-10 w-10 rounded-full bg-myfin-50 text-myfin-600 grid place-items-center">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M7 16h5m-4-9h10l2 2v8a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2z"/></svg>
+                </span>
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-900">FAQ</h3>
+                  <p class="mt-2 text-slate-600 text-sm leading-relaxed">Answers to common questions and troubleshooting tips.</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="py-6 text-center text-sm text-slate-500"></footer>
+
+    <div id="addModal" class="fixed inset-0 z-50 hidden" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+      <div class="relative mx-auto mt-24 w-[92%] max-w-lg">
+        <div class="rounded-2xl bg-white shadow-soft border border-slate-200">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+            <h2 class="text-base font-semibold text-slate-900">Add New Page</h2>
+            <button id="closeAddModal" class="btn btn-ghost !rounded-lg !px-2 !py-1" aria-label="Close modal">
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <form id="addPageForm" class="px-5 py-4 space-y-4">
+            <div>
+              <label for="pageTitle" class="label">Title</label>
+              <input id="pageTitle" type="text" class="input" placeholder="e.g., Release Notes" required />
+            </div>
+            <div>
+              <label for="pageDesc" class="label">Description</label>
+              <textarea id="pageDesc" class="input min-h-[120px]" placeholder="Short summary of this page..." required></textarea>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-2">
+              <button type="button" id="cancelAdd" class="btn btn-ghost">Cancel</button>
+              <button type="submit" class="btn btn-primary">
+                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+                Create Page
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div id="settingsModal" class="fixed inset-0 z-50 hidden" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+      <div class="relative mx-auto mt-16 w-[92%] max-w-2xl">
+        <div class="rounded-2xl bg-white shadow-soft border border-slate-200">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+            <div>
+              <h2 class="text-base font-semibold text-slate-900">Homepage Tiles</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Check to show, drag to reorder. Click <span class="badge">Edit</span> to swap the tile’s content type.</p>
+            </div>
+            <button id="closeSettingsModal" class="btn btn-ghost !rounded-lg !px-2 !py-1" aria-label="Close settings">
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <form id="tilesForm" class="px-5 py-4 space-y-4">
+            <div id="tilesList" class="space-y-2">
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <div class="text-xs text-slate-500">Tip: Use the grip to drag. Order controls the grid sequence.</div>
+              <div class="flex items-center gap-2">
+                <button type="button" id="cancelSettings" class="btn btn-ghost">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div id="editModal" class="fixed inset-0 z-[60] hidden" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+      <div class="relative mx-auto mt-24 w-[92%] max-w-lg">
+        <div class="rounded-2xl bg-white shadow-soft border border-slate-200">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+            <h2 class="text-base font-semibold text-slate-900">Edit Tile</h2>
+            <button id="closeEditModal" class="btn btn-ghost !rounded-lg !px-2 !py-1" aria-label="Close modal">
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <form id="editTileForm" class="px-5 py-4 space-y-4">
+            <input type="hidden" id="editModalItemId" />
+            <input type="hidden" id="editModalIconKey" />
+            <div>
+              <label for="editModalTypeSelect" class="label">Content Type (determines Title)</label>
+              <select id="editModalTypeSelect" class="select w-full">
+              </select>
+            </div>
+            <div>
+              <label for="editModalDesc" class="label">Description</label>
+              <textarea id="editModalDesc" class="input min-h-[120px]" placeholder="This description will appear on the homepage tile."></textarea>
+            </div>
+            <div>
+              <label class="label">Icon</label>
+              <div id="editModalIconPicker" class="mt-2 grid grid-cols-8 gap-2">
+              </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-2">
+              <button type="button" id="cancelEdit" class="btn btn-ghost">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+
+      
+      const ICON_LIBRARY = {
+        lightbulb: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v4m0 10v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M3 12h4m10 0h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>`,
+        download: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v10m0 0l-3.5-3.5M12 14l3.5-3.5M4 20h16"/></svg>`,
+        stack: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/></svg>`,
+        plus: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6"/></svg>`,
+        code: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M6 12h12M8 17h8"/></svg>`,
+        chat: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M7 16h5m-4-9h10l2 2v8a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2z"/></svg>`,
+        book: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.25278C12 6.25278 10.8954 5 9.5 5C8.10457 5 7 6.25278 7 6.25278V19.5C7 19.5 8.10457 18.2472 9.5 18.2472C10.8954 18.2472 12 19.5 12 19.5M12 6.25278C12 6.25278 13.1046 5 14.5 5C15.8954 5 17 6.25278 17 6.25278V19.5C17 19.5 15.8954 18.2472 14.5 18.2472C13.1046 18.2472 12 19.5 12 19.5M12 6.25278V19.5"/></svg>`,
+        shield: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>`,
+        gear: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.548-.893 3.31.869 2.417 2.417a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.893 1.548-.869 3.31-2.417 2.417a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.548.893-3.31-.869-2.417-2.417a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35.643-.156 1.17-.583 1.066-2.573-.893-1.548.869-3.31 2.417-2.417.946.546 2.147.137 2.573-1.066zM15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`,
+      };
+      
+      const CONTENT_LIBRARY = {
+        introduction: {
+          title: 'Introduction',
+          desc: 'Learn what this project is about and how to get started quickly.',
+          iconKey: 'lightbulb'
+        },
+        installation: {
+          title: 'Installation',
+          desc: 'Step-by-step instructions to set up your environment and begin using the app.',
+          iconKey: 'download'
+        },
+        apis: {
+          title: 'APIs',
+          desc: 'Explore available endpoints, authentication, and usage examples.',
+          iconKey: 'stack'
+        },
+        guides: {
+          title: 'Guides',
+          desc: 'Common tasks and best practices for building with the software.',
+          iconKey: 'plus'
+        },
+        sdk: {
+          title: 'SDKs',
+          desc: 'Language-specific SDKs and quickstart snippets.',
+          iconKey: 'code'
+        },
+        faq: {
+          title: 'FAQ',
+          desc: 'Answers to common questions and troubleshooting tips.',
+          iconKey: 'chat'
+        }
+      };
+    </script>
+
+    <script>
+      
+      const search = document.getElementById('tocSearch');
+      const tocList = document.getElementById('tocList');
+      const links = Array.from(tocList.querySelectorAll('.toc-link'));
+
+      if (search) {
+        search.addEventListener('input', () => {
+          const q = search.value.trim().toLowerCase();
+          links.forEach(a => {
+            const show = a.textContent.toLowerCase().includes(q);
+            a.parentElement.classList.toggle('hidden', !show);
+          });
+        });
+      }
+
+      const targets = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = '#' + entry.target.id;
+            links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+          }
+        });
+      }, { rootMargin: '0px 0px -70% 0px', threshold: 0.1 });
+      targets.forEach(el => el && observer.observe(el));
+    </script>
+
+    <script>
+
+      function openModal(modalEl, focusEl) {
+        modalEl.classList.remove('hidden');
+        modalEl.setAttribute('aria-hidden', 'false');
+        setTimeout(() => focusEl && focusEl.focus(), 50);
+      }
+      function closeModal(modalEl, formEl) {
+        modalEl.classList.add('hidden');
+        modalEl.setAttribute('aria-hidden', 'true');
+        if (formEl) formEl.reset();
+      }
+
+      const addModal = document.getElementById('addModal');
+      const openAddModalBtn = document.getElementById('openAddModal');
+      const closeAddModalBtn = document.getElementById('closeAddModal');
+      const cancelAddBtn = document.getElementById('cancelAdd');
+      const addPageForm = document.getElementById('addPageForm');
+      const pageTitleEl = document.getElementById('pageTitle');
+
+      openAddModalBtn.addEventListener('click', () => openModal(addModal, pageTitleEl));
+      closeAddModalBtn.addEventListener('click', () => closeModal(addModal, addPageForm));
+      cancelAddBtn.addEventListener('click', () => closeModal(addModal, addPageForm));
+      addModal.addEventListener('click', (e) => { if (e.target === addModal) closeModal(addModal, addPageForm); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !addModal.classList.contains('hidden')) closeModal(addModal, addPageForm); });
+      addPageForm.addEventListener('submit', (e) => { e.preventDefault(); closeModal(addModal, addPageForm); });
+    </script>
+
+    <script>
+
+      const tilesForm = document.getElementById('tilesForm');
+      const tilesList = document.getElementById('tilesList');
+      const cardsGrid = document.getElementById('cardsGrid');
+
+      const editModal = document.getElementById('editModal');
+      const closeEditModalBtn = document.getElementById('closeEditModal');
+      const cancelEditBtn = document.getElementById('cancelEdit');
+      const editTileForm = document.getElementById('editTileForm');
+      const editModalItemIdEl = document.getElementById('editModalItemId');
+      const editModalTypeSelectEl = document.getElementById('editModalTypeSelect');
+      const editModalDescEl = document.getElementById('editModalDesc');
+      const editModalIconKeyEl = document.getElementById('editModalIconKey');
+
+
+      const STORAGE_KEY = 'homeTileConfig:v4';
+
+      function getCurrentTiles() {
+        const articles = Array.from(cardsGrid.querySelectorAll('article'));
+        return articles.map(a => {
+          const originalType = a.id;
+          const currentTypeKey = a.dataset.type || inferTypeFromId(a.id);
+          const libEntry = CONTENT_LIBRARY[originalType] || CONTENT_LIBRARY.introduction;
+          const currentLibEntry = CONTENT_LIBRARY[currentTypeKey] || CONTENT_LIBRARY.introduction;
+          
+          const currentIconKey = a.dataset.iconkey || currentLibEntry.iconKey || 'lightbulb';
+          
+          return {
+            id: a.id,
+            title: currentLibEntry.title, 
+            visible: !a.classList.contains('hidden'),
+            type: currentTypeKey,
+            description: a.querySelector('p')?.textContent?.trim() || libEntry.desc,
+            iconKey: currentIconKey
+          };
+        });
+      }
+      function inferTypeFromId(id) {
+        return (id in CONTENT_LIBRARY) ? id : 'introduction';
+      }
+
+      function loadConfig() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return null;
+          const cfg = JSON.parse(raw);
+          if (!Array.isArray(cfg)) return null;
+          cfg.forEach(item => {
+            if (!(item.type in CONTENT_LIBRARY)) item.type = 'introduction';
+            if (!(item.iconKey in ICON_LIBRARY)) {
+              const typeLib = CONTENT_LIBRARY[item.type] || CONTENT_LIBRARY.introduction;
+              item.iconKey = typeLib.iconKey;
+            }
+          });
+          return cfg;
+        } catch { return null; }
+      }
+
+      function saveConfig(cfg) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg)); } catch {}
+      }
+
+      function applyTileConfigToCard(cardEl, tileConfig) {
+        const lib = CONTENT_LIBRARY[tileConfig.type] || CONTENT_LIBRARY.introduction;
+        const iconSvg = ICON_LIBRARY[tileConfig.iconKey] || ICON_LIBRARY.lightbulb;
+        
+        cardEl.dataset.type = tileConfig.type;
+        cardEl.dataset.iconkey = tileConfig.iconKey;
+
+        const iconWrap = cardEl.querySelector('span');
+        const titleEl = cardEl.querySelector('h3');
+        const descEl  = cardEl.querySelector('p');
+
+        if (iconWrap) iconWrap.innerHTML = iconSvg;
+        if (titleEl) titleEl.textContent = lib.title;
+        if (descEl)  descEl.textContent  = tileConfig.description || lib.desc;
+      }
+
+      function applyConfig(cfg) {
+        const idToEl = {};
+        Array.from(cardsGrid.children).forEach(el => idToEl[el.id] = el);
+
+        cfg.forEach(item => {
+          const el = idToEl[item.id];
+          if (!el) return;
+          cardsGrid.appendChild(el);
+          if (item.visible) el.classList.remove('hidden');
+          else el.classList.add('hidden');
+          
+          applyTileConfigToCard(el, item);
+        });
+      }
+
+      function buildRowsFromTiles(tiles) {
+        tilesList.innerHTML = '';
+        tiles.forEach(t => {
+          const row = document.createElement('div');
+          row.className = 'drag-row';
+          row.setAttribute('draggable', 'true');
+          row.dataset.id = t.id;
+          row.dataset.type = t.type;
+          row.dataset.description = t.description;
+          row.dataset.iconkey = t.iconKey;
+
+          const isChanged = t.type !== t.id;
+
+          row.innerHTML = `
+            <div class="flex items-center gap-3 min-w-0">
+              <button type="button" class="drag-handle" aria-label="Drag to reorder" title="Drag to reorder">
+                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16"/></svg>
+              </button>
+              <label class="inline-flex items-center gap-2 truncate">
+                <input type="checkbox" class="tile-checkbox h-4 w-4 text-myfin-600 rounded border-slate-300" ${t.visible ? 'checked' : ''} />
+                <span class="text-sm font-medium text-slate-800 truncate">${t.title}</span>
+              </label>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="badge hidden" title="Content changed">new</span>
+              <button type="button" class="btn btn-ghost px-3 py-1.5 text-sm edit-btn">Edit</button>
+            </div>
+
+            <!-- REQ 3: Removed inline edit panel -->
+          `;
+          tilesList.appendChild(row);
+        });
+        initRowControls();
+        initDragAndDrop();
+      }
+
+      function getFormConfig() {
+        const rows = Array.from(tilesList.querySelectorAll('.drag-row'));
+        return rows.map(r => ({
+          id: r.dataset.id,
+          visible: r.querySelector('.tile-checkbox')?.checked ?? true,
+          type: r.dataset.type || 'introduction',
+          description: r.dataset.description || '',
+          iconKey: r.dataset.iconkey || 'lightbulb'
+        }));
+      }
+
+      function initRowControls() {
+        tilesList.querySelectorAll('.drag-row').forEach(row => {
+          const editBtn = row.querySelector('.edit-btn');
+          
+          editBtn.addEventListener('click', () => {
+            const id = row.dataset.id;
+            const type = row.dataset.type;
+            const description = row.dataset.description;
+            const iconKey = row.dataset.iconkey;
+
+            editModalItemIdEl.value = id;
+            editModalTypeSelectEl.value = type;
+            editModalDescEl.value = description;
+            editModalIconKeyEl.value = iconKey;
+            
+            const picker = document.getElementById('editModalIconPicker');
+            picker.innerHTML = '';
+            Object.keys(ICON_LIBRARY).forEach(key => {
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              btn.className = 'icon-pick-btn';
+              btn.dataset.iconkey = key;
+              btn.innerHTML = ICON_LIBRARY[key];
+              if (key === iconKey) {
+                btn.classList.add('active');
+              }
+              btn.addEventListener('click', () => {
+                picker.querySelectorAll('.icon-pick-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                editModalIconKeyEl.value = key;
+                
+                const cardEl = document.getElementById(id);
+                if (cardEl) {
+                  const iconWrap = cardEl.querySelector('span');
+                  if(iconWrap) iconWrap.innerHTML = ICON_LIBRARY[key];
+                }
+              });
+              picker.appendChild(btn);
+            });
+            
+            openModal(editModal, editModalTypeSelectEl);
+          });
+        });
+      }
+      
+      closeEditModalBtn.addEventListener('click', () => closeModal(editModal, editTileForm));
+      
+      cancelEditBtn.addEventListener('click', () => {
+        const itemId = editModalItemIdEl.value;
+        if (itemId) {
+          const row = tilesList.querySelector(`.drag-row[data-id="${itemId}"]`);
+          if (row) {
+            const titleSpan = row.querySelector('.text-sm.font-medium');
+            const savedType = row.dataset.type;
+            const savedIconKey = row.dataset.iconkey;
+            const savedTitle = (CONTENT_LIBRARY[savedType] || CONTENT_LIBRARY.introduction).title;
+            if (titleSpan) {
+              titleSpan.textContent = savedTitle;
+            }
+            const cardEl = document.getElementById(itemId);
+            if (cardEl) {
+              const iconWrap = cardEl.querySelector('span');
+              if(iconWrap) iconWrap.innerHTML = ICON_LIBRARY[savedIconKey] || ICON_LIBRARY.lightbulb;
+            }
+          }
+        }
+        closeModal(editModal);
+      });
+      
+      editModal.addEventListener('click', (e) => { if (e.target === editModal) closeModal(editModal, editTileForm); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !editModal.classList.contains('hidden')) closeModal(editModal, editTileForm); });
+
+      editTileForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const itemId = editModalItemIdEl.value;
+        const newType = editModalTypeSelectEl.value;
+        const newDesc = editModalDescEl.value;
+        const newIconKey = editModalIconKeyEl.value;
+        
+        const row = tilesList.querySelector(`.drag-row[data-id="${itemId}"]`);
+        if (!row) return;
+
+        row.dataset.type = newType;
+        row.dataset.description = newDesc;
+        row.dataset.iconkey = newIconKey;
+        
+        const badge = row.querySelector('.badge');
+        if (badge) {
+          badge.textContent = 'new';
+          badge.classList.remove('hidden');
+        }
+        
+        const titleSpan = row.querySelector('.text-sm.font-medium');
+        if (titleSpan) {
+          titleSpan.textContent = (CONTENT_LIBRARY[newType] || CONTENT_LIBRARY.introduction).title;
+        }
+
+        const cardEl = document.getElementById(itemId);
+        if (cardEl) {
+          applyTileConfigToCard(cardEl, {
+            id: itemId,
+            type: newType,
+            description: newDesc,
+            iconKey: newIconKey,
+            visible: !cardEl.classList.contains('hidden')
+          });
+        }
+        
+        closeModal(editModal, editTileForm);
+
+        const currentConfig = getFormConfig();
+        saveConfig(currentConfig);
+      });
+
+      let dragSrc = null;
+      function initDragAndDrop() {
+        const rows = Array.from(tilesList.querySelectorAll('.drag-row'));
+        rows.forEach(row => {
+          row.addEventListener('dragstart', (e) => {
+            dragSrc = row;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', row.dataset.id);
+          });
+          row.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            row.classList.add('drag-over');
+          });
+          row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+          row.addEventListener('drop', (e) => {
+            e.preventDefault();
+            row.classList.remove('drag-over');
+            const dragging = dragSrc;
+            if (!dragging || dragging === row) return;
+            const rowsArr = Array.from(tilesList.children).filter(c => c.classList.contains('drag-row'));
+            const srcIndex = rowsArr.indexOf(dragging);
+            const destIndex = rowsArr.indexOf(row);
+            if (srcIndex < destIndex) {
+              tilesList.insertBefore(dragging, row.nextSibling);
+            } else {
+              tilesList.insertBefore(dragging, row);
+            }
+          });
+          row.addEventListener('dragend', () => {
+            Array.from(tilesList.children).forEach(r => r.classList.remove('drag-over'));
+            dragSrc = null;
+          });
+        });
+      }
+
+      const openSettingsModalBtn = document.getElementById('openSettingsModal');
+      const closeSettingsModalBtn = document.getElementById('closeSettingsModal');
+      const cancelSettingsBtn = document.getElementById('cancelSettings');
+      const settingsModal = document.getElementById('settingsModal');
+
+      function openSettings() {
+        let cfg = loadConfig();
+        let tiles;
+        
+        if (cfg) {
+          tiles = cfg.map(item => {
+            const libEntry = CONTENT_LIBRARY[item.id] || CONTENT_LIBRARY.introduction;
+            const currentTypeLib = CONTENT_LIBRARY[item.type] || CONTENT_LIBRARY.introduction;
+            return {
+              ...item,
+              title: currentTypeLib.title,
+              description: item.description || currentTypeLib.desc || libEntry.desc,
+              iconKey: item.iconKey || currentTypeLib.iconKey
+            };
+          });
+        } else {
+          tiles = getCurrentTiles();
+        }
+        
+        buildRowsFromTiles(tiles);
+        const focusEl = tilesList.querySelector('.tile-checkbox');
+        openModal(settingsModal, focusEl);
+      }
+      function closeSettings() { closeModal(settingsModal); }
+
+      openSettingsModalBtn.addEventListener('click', openSettings);
+      closeSettingsModalBtn.addEventListener('click', closeSettings);
+      cancelSettingsBtn.addEventListener('click', closeSettings);
+      settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettings(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !settingsModal.classList.contains('hidden')) closeSettings(); });
+
+      tilesForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const cfg = getFormConfig();
+        applyConfig(cfg);
+        saveConfig(cfg);
+        closeSettings();
+      });
+
+      window.addEventListener('DOMContentLoaded', () => {
+        editModalTypeSelectEl.innerHTML = Object.keys(CONTENT_LIBRARY).map(k => 
+          `<option value="${k}">${CONTENT_LIBRARY[k].title}</option>`
+        ).join('');
+
+        editModalTypeSelectEl.addEventListener('change', () => {
+          const itemId = editModalItemIdEl.value;
+          if (!itemId) return;
+          const row = tilesList.querySelector(`.drag-row[data-id="${itemId}"]`);
+          if (!row) return;
+          
+          const titleSpan = row.querySelector('.text-sm.font-medium');
+          const newType = editModalTypeSelectEl.value;
+          const newTitle = (CONTENT_LIBRARY[newType] || CONTENT_LIBRARY.introduction).title;
+          
+          if (titleSpan) {
+            titleSpan.textContent = newTitle;
+          }
+          
+          const newIconKey = (CONTENT_LIBRARY[newType] || CONTENT_LIBRARY.introduction).iconKey;
+          
+          editModalIconKeyEl.value = newIconKey;
+          
+          const picker = document.getElementById('editModalIconPicker');
+          picker.querySelectorAll('.icon-pick-btn').forEach(b => b.classList.remove('active'));
+          const newActiveBtn = picker.querySelector(`.icon-pick-btn[data-iconkey="${newIconKey}"]`);
+          if (newActiveBtn) newActiveBtn.classList.add('active');
+
+          const cardEl = document.getElementById(itemId);
+          if (cardEl) {
+              const iconWrap = cardEl.querySelector('span');
+              if(iconWrap) iconWrap.innerHTML = ICON_LIBRARY[newIconKey];
+          }
+        });
+
+        const cfg = loadConfig();
+        if (cfg) {
+          const fullCfg = cfg.map(item => {
+            const currentTypeLib = CONTENT_LIBRARY[item.type] || CONTENT_LIBRARY.introduction;
+            const libEntry = CONTENT_LIBRARY[item.id] || CONTENT_LIBRARY.introduction;
+            return {
+              ...item,
+              description: item.description || currentTypeLib.desc,
+              iconKey: item.iconKey || currentTypeLib.iconKey || libEntry.iconKey
+            }
+          });
+          applyConfig(fullCfg);
+        }
+      });
+    </script>
+  </body>
+</html>
